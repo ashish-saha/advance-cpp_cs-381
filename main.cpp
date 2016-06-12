@@ -13,7 +13,6 @@ int main(int argc, const char * argv[]) {
         cout << x << endl;
     }
     if (infile.is_open())    cout << "Hello, World!\n";
-    else                     cout << "The file is not open";
     infile.close();
     return 0;
 }
