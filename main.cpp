@@ -19,6 +19,7 @@ public:
 
 template <class T>
 class linkedList {
+    friend class node<T>;
 private:
     node<T>* head;
 public:
@@ -37,7 +38,7 @@ public:
             if ((n->return_ex() <= p->return_ex()) && (n->return_ex() > p->return_next()->return_ex())) {
                 if (n->return_ex() == p->return_ex())   {
                     p->return_co() += n->return_co();
-                    if (p->return_co() ==0)   { delete_Node (p);}
+//                    if (p->return_co() ==0)   { delete_Node (p);}
                     return;
                 }
                 node<T>* temp = p->return_next();
@@ -50,7 +51,7 @@ public:
 //        if (n->return_co() ==0)   return;
         if (n->return_ex() == p->return_ex())   {
             p->return_co() += n->return_co();
-            if (p->return_co() ==0)   { delete_Node (p);}
+//            if (p->return_co() ==0)   { delete_Node (p);}
             return;
         }
         p->return_next() = n;
@@ -67,11 +68,45 @@ public:
             temp=temp->return_next();
         }
     }
+
+    linkedList<T>* add( linkedList<T>* s) {
+        linkedList<T>* temp = new linkedList ();
+        node<T>* this_Head = head;
+        node<T>* other_Head = s->head;
+        while (other_Head != NULL) {
+            node <int>* a = new node<int> (other_Head->return_co(), other_Head->return_ex());
+            node <int>* b = new node<int> (this_Head->return_co(), this_Head->return_ex());
+            temp->append(a);
+            temp->append(b);
+            other_Head = other_Head->return_next();
+            this_Head = this_Head->return_next();
+        }
+         return temp;
+    }
+
+
+    linkedList<T>* subtract( linkedList<T>* s) {
+        linkedList<T>* temp = new linkedList ();
+        node<T>* this_Head = head;
+        node<T>* other_Head = s->head;
+        while (other_Head != NULL) {
+            node <int>* a = new node<int> ((-1)*other_Head->return_co(), other_Head->return_ex());
+            node <int>* b = new node<int> (this_Head->return_co(), this_Head->return_ex());
+            temp->append(a);
+            temp->append(b);
+            other_Head = other_Head->return_next();
+            this_Head = this_Head->return_next();
+        }
+        return temp;
+    }
+
+    
+    
     ~linkedList () {
         node<T>* temp = head;
         while (temp) {
             delete(temp);
-            temp = temp->next;
+            temp = temp->return_next ();
         }
     }
     friend ostream& operator<<(ostream& os, linkedList<T> s);
@@ -81,12 +116,19 @@ template <class T>
 ostream& operator<<(ostream& os, linkedList<T>* s) {
     node<T>* p = s->return_head();
     while (p){
-        if (p->return_co() == 0)        cout << 0 << " " << 0 << "  ";
-        else                            cout << p->return_co() << " " << p->return_ex() << "  ";
-        p=p->return_next();
+        if (p->return_co() == 0)  {
+//            os << 0 << " " << 0 << "  ";
+            p=p->return_next();
+        }
+        else    {
+            os << p->return_co() << " " << p->return_ex() << "  ";
+            p=p->return_next();
+        }
     }
     return os;
 };
+
+
 
 
 template <class T>
@@ -112,7 +154,7 @@ int main(int argc, const char * argv[]) {
     
     ifstream infile;
     infile.open ("/Users/deep/desktop/input.txt");
-    linkedList<int>* polynomial [size];
+    linkedList<int> *polynomial [size];
     int counter = 0;
     string line;
     int x, y;
@@ -127,7 +169,10 @@ int main(int argc, const char * argv[]) {
 //        print_list<int> (list->return_head());
     }
 
-    for (int i=0; i<size; i++)  cout << i << ". " << polynomial[i] << endl;
+//    for (int i=0; i<size; i++)  cout << i << ". " << polynomial[i] << endl;
+    cout << polynomial[3] << endl;
+    cout << polynomial [4] << endl;
+    cout << polynomial[3]->subtract (polynomial[4]) << endl;
  
     infile.close();
     return 0;
