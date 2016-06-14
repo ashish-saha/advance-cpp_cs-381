@@ -2,178 +2,112 @@
 #include<fstream>
 #include <sstream>      // std::istringstream
 using namespace std;
-
-template <class T>
-class node {
-private:
-    T coefficient;
-    T exponent;
-    node* next;
+class polynomial  {
 public:
-    node ()             {next = 0;}
-    node (T i, T j)     {coefficient = i; exponent = j; next=0;}
-    T &return_co()      {return coefficient;}
-    T &return_ex()      {return exponent;}
-    node* &return_next(){return next;}
-};
-
-template <class T>
-class linkedList {
-    friend class node<T>;
-private:
-    node<T>* head;
-public:
-    linkedList () {
-        head = new node <T>(99999, 99999);
+    int array [20]= {0};
+    polynomial () {}
+    
+    
+    polynomial(int *a)  {
+        for (int i=0; i<20; i++)
+            array[i] = a[i];
     }
     
-    node<int>* &return_head () {
-        return head->return_next();
+    void print () {
+        for (int i=19; i>=0; i--) {
+            if ( array[i] == -99 || array[i] == 0)        continue;
+            else                                          cout << array[i] << " " << i << " ";
+        }
     }
     
-    void append (node<T>* n) {
-        node<T>* p = head;
-        while (p->return_next() != NULL) {
-//            if (n->return_co() ==0)   return;
-            if ((n->return_ex() <= p->return_ex()) && (n->return_ex() > p->return_next()->return_ex())) {
-                if (n->return_ex() == p->return_ex())   {
-                    p->return_co() += n->return_co();
-//                    if (p->return_co() ==0)   { delete_Node (p);}
-                    return;
-                }
-                node<T>* temp = p->return_next();
-                p->return_next() = n;
-                n->return_next() = temp;
-                return;
+    polynomial operator+ (polynomial p) {
+        polynomial temp;
+        for (int i=0; i<19; i++)
+            temp.array[i]= array[i] + p.array[i];
+        return temp;
+    }
+    
+    polynomial operator- (polynomial p) {
+        polynomial temp;
+        for (int i=0; i<19; i++)
+            temp.array[i]= array[i] - p.array[i];
+        return temp;
+    }
+    
+    polynomial operator* (polynomial p) {
+        polynomial temp;
+        for (int i=0; i<19; i++) {
+            for (int j=0; j<19; j++) {
+                if (array[i] == 0 || p.array[j] == 0)       continue;
+                temp.array[i+j] = temp.array[i+j] + array[i]*p.array[j];
             }
-            p=p->return_next();
-        }
-//        if (n->return_co() ==0)   return;
-        if (n->return_ex() == p->return_ex())   {
-            p->return_co() += n->return_co();
-//            if (p->return_co() ==0)   { delete_Node (p);}
-            return;
-        }
-        p->return_next() = n;
-    }
-    
-    void delete_Node (node<T>* n) {
-        node<T>* temp = head;
-        node<T>* previous = temp;
-        while (temp) {
-            if (temp->return_co() == n->return_co()) {
-                previous->return_next() = temp->return_next();
-            }
-            previous = temp;
-            temp=temp->return_next();
-        }
-    }
-
-    linkedList<T>* add( linkedList<T>* s) {
-        linkedList<T>* temp = new linkedList ();
-        node<T>* this_Head = head;
-        node<T>* other_Head = s->head;
-        while (other_Head != NULL) {
-            node <int>* a = new node<int> (other_Head->return_co(), other_Head->return_ex());
-            node <int>* b = new node<int> (this_Head->return_co(), this_Head->return_ex());
-            temp->append(a);
-            temp->append(b);
-            other_Head = other_Head->return_next();
-            this_Head = this_Head->return_next();
-        }
-         return temp;
-    }
-
-
-    linkedList<T>* subtract( linkedList<T>* s) {
-        linkedList<T>* temp = new linkedList ();
-        node<T>* this_Head = head;
-        node<T>* other_Head = s->head;
-        while (other_Head != NULL) {
-            node <int>* a = new node<int> ((-1)*other_Head->return_co(), other_Head->return_ex());
-            node <int>* b = new node<int> (this_Head->return_co(), this_Head->return_ex());
-            temp->append(a);
-            temp->append(b);
-            other_Head = other_Head->return_next();
-            this_Head = this_Head->return_next();
         }
         return temp;
     }
-
     
+    friend ostream& operator<<(ostream& os, polynomial p);
     
-    ~linkedList () {
-        node<T>* temp = head;
-        while (temp) {
-            delete(temp);
-            temp = temp->return_next ();
-        }
-    }
-    friend ostream& operator<<(ostream& os, linkedList<T> s);
 };
 
-template <class T>
-ostream& operator<<(ostream& os, linkedList<T>* s) {
-    node<T>* p = s->return_head();
-    while (p){
-        if (p->return_co() == 0)  {
-//            os << 0 << " " << 0 << "  ";
-            p=p->return_next();
-        }
-        else    {
-            os << p->return_co() << " " << p->return_ex() << "  ";
-            p=p->return_next();
-        }
+ostream& operator<<(ostream& os, polynomial p) {
+    for (int i=19; i>=0; i--) {
+        if ( p.array[i] == -99 || p.array[i] == 0)        continue;
+        else                                          os << p.array[i] << " " << i << " ";
     }
     return os;
-};
-
-
-
-
-template <class T>
-void print_list (node<T> *p){
-    while (p){
-        if (p->return_co() == 0)        cout << 0 << " " << 0 << "  ";
-        else                            cout << p->return_co() << " " << p->return_ex() << "  ";
-        p=p->return_next();
-    }
-    cout << endl;
 }
 
 int main(int argc, const char * argv[]) {
-    int size;
+    int size_array [100] = {0};
+    int size = 0;
+    int max = 0;
     ifstream infile0;
     string line0;
-    infile0.open ("/Users/deep/desktop/input.txt");
+    infile0.open (argv[1]);              //"/Users/deep/desktop/input.txt");
     while (getline(infile0,line0)){
+        int a, b;
+        istringstream iss (line0);
+        while (iss >> a >> b)       if (b>max)  max=b;
+        size_array[size] = max;
+        max=0;
         size++;
     }
     infile0.close();
-    
-    
-    ifstream infile;
-    infile.open ("/Users/deep/desktop/input.txt");
-    linkedList<int> *polynomial [size];
-    int counter = 0;
-    string line;
-    int x, y;
-    while (getline (infile, line)) {
-        istringstream iss(line);
-        linkedList<int>* list = new linkedList<int> ();
-        polynomial[counter++] = list;
-        while (iss >> x >> y) {
-            node <int>* a = new node<int> (x,y);
-            list->append(a);
-        }
-//        print_list<int> (list->return_head());
-    }
 
-//    for (int i=0; i<size; i++)  cout << i << ". " << polynomial[i] << endl;
-    cout << polynomial[3] << endl;
-    cout << polynomial [4] << endl;
-    cout << polynomial[3]->subtract (polynomial[4]) << endl;
- 
+    int** array = new int*[size];
+    for (int i=0; i<size; ++i){
+        array[i] = new int [20];
+    }
+    
+    for (int i=0; i<size; i++)
+        for (int j=0; j<20; j++)
+            array[i][j] = 0;
+    
+    int x, y, row = 0;
+    ifstream infile;
+    infile.open (argv[1]);              //"/Users/deep/desktop/input.txt");
+    string line;
+    while (getline (infile, line)){
+        istringstream iss (line);
+        while (iss >> x >> y) {
+            array[row][y] += x;
+        }
+        row++;
+    }
     infile.close();
+    
+    ofstream outfile;
+    outfile.open(argv[2]);              //"/Users/deep/desktop/output.txt");
+    for (int i=0; i<size; i=i+2){
+        polynomial x = array[i];
+        polynomial y = array[i+1];
+        outfile << i << ".   cannonical  " << x << endl;
+        outfile << i+1 << ".   cannonical  " << y << endl;
+        outfile << i << "+" << i+1 << ". sum         " << x+y << endl;
+        outfile << i << "-" << i+1 << ". difference  " << x-y << endl;
+        outfile << i << "*" << i+1 << ". Multiply    " << x*y << endl;
+        outfile << endl ;
+    }
+    outfile.close();
     return 0;
 }
