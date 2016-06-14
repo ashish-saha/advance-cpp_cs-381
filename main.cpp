@@ -98,6 +98,9 @@ int main(int argc, const char * argv[]) {
     
     ofstream outfile;
     outfile.open(argv[2]);              //"/Users/deep/desktop/output.txt");
+    //if there is only one polynomial the just print it out, there is no add, subtract or multiply
+    if (size==1)    {  polynomial x = array[0];   outfile << x;   outfile.close();  return 0;}
+    
     for (int i=0; i<size; i=i+2){
         polynomial x = array[i];
         polynomial y = array[i+1];
