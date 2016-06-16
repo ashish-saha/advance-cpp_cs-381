@@ -91,6 +91,22 @@ public:
         return temp;
     }
     
+    linkedList<T> operator*(linkedList<T> l) {
+        linkedList<T> temp;
+        node<T>* this_head = head->return_next();
+        node<T>* other_head = l.head->return_next();
+        while (this_head != NULL) {
+            while (other_head != NULL ) {
+                node<T>* x = new node<T> (this_head->return_co()*other_head->return_co(), this_head->return_ex()+other_head->return_ex());
+                temp.append(x);
+                other_head = other_head->return_next();
+            }
+            this_head = this_head->return_next();
+            other_head = l.head->return_next();
+        }
+        return temp;
+    }
+    
     ~linkedList () {
 //        node<T>* temp = head;
 //        while (temp) {
@@ -133,40 +149,44 @@ void print_list (node<T> *p){
 int main(int argc, const char * argv[]) {
 
     ifstream infile;
-    infile.open("/Users/deep/desktop/input.txt");
+    ofstream outfile;
+    infile.open(argv[1]);       //"/Users/deep/desktop/input.txt");
+    outfile.open(argv[2]);
     string line, line2;
     int x, y;
     while (getline (infile, line)) {
-        cout << "Originial ";
+        outfile << "Originial ";
         linkedList<int> list;
         istringstream iss (line);
         while (iss >> x >> y)   {
-            cout << x << " " << y << " ";
+            outfile << x << " " << y << " ";
             node<int>* n = new node <int> (x,y);
             list.append(n);
         }
-        cout << endl;
+        outfile << endl;
         
         getline(infile,line2);
-        cout << "Originial ";
+        outfile << "Originial ";
         linkedList<int> list2;
         istringstream iss2 (line2);
         while (iss2 >> x >> y)   {
-            cout << x << " " << y << " ";
+            outfile << x << " " << y << " ";
             node<int>* n = new node <int> (x,y);
             list2.append(n);
         }
         
         
-        cout << endl;
-        cout << "cannonical " << list << endl;
-        cout << "cannonical " << list2 << endl;
-        cout << "Sum        " << list+list2 << endl;
-        cout << "Subtract   " << list-list2 << endl << endl;
+        outfile << endl;
+        outfile << "cannonical " << list << endl;
+        outfile << "cannonical " << list2 << endl;
+        outfile << "Sum        " << list+list2 << endl;
+        outfile << "Subtract   " << list-list2 << endl << endl;
+        outfile << "Multiply   " << list*list2 << endl << endl;
+
     }
         
         
     infile.close();
-
+    outfile.close();
     return 0;
 }
