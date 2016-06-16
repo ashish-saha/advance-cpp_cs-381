@@ -180,7 +180,7 @@ int main(int argc, const char * argv[]) {
         outfile << "cannonical " << list << endl;
         outfile << "cannonical " << list2 << endl;
         outfile << "Sum        " << list+list2 << endl;
-        outfile << "Subtract   " << list-list2 << endl << endl;
+        outfile << "Subtract   " << list-list2 << endl;
         outfile << "Multiply   " << list*list2 << endl << endl;
 
     }
