@@ -2,7 +2,6 @@
 #include <cstdlib>
 #include<cassert>
 using namespace std;
-// see: http://www.devx.com/cplus/10MinuteSolution/30302/1954 for friend template functions
 template <class T> // forward declaration
 class SA;
 template <class T>
@@ -25,7 +24,7 @@ public:
     // SA x(10,20);
     SA(int l, int h){
         if((h-l+1)<=0)
-        {cout<< "constructor error in bounds definition"<<endl;
+        {cout<< "constructor error in bounds definition SA"<<endl;
             exit(1);}
         low=l;
         high=h;
@@ -55,7 +54,7 @@ public:
     //SA x(10,20); x[15]= 100;
     T& operator[](int i){
         if(i<low || i>high)
-        {cout<< "index "<<i<<" out of range"<<endl;
+        {cout<< "index "<<i<<" out of range SA"<<endl;
             exit(1);}
         return p[i-low];
     }
@@ -103,8 +102,6 @@ public:
         for (int j = 0; j < r; j++)
             matrix[j] = SA <T> (c);
     }
-//  Matrix() {
-//  }
     Matrix(int rowl, int rowh, int coll, int colh) {
         row_low = rowl;
         row_high = rowh;
@@ -114,25 +111,22 @@ public:
         for (int i = rowl; i <= (rowh); i++)
             matrix[i] = SA < T > (coll, colh);
     }
-    
-    ~Matrix() {
-    }
-    
+
     SA < T > &operator[](int i) {
         return matrix[i];
     }
-
+    
     Matrix<T> operator* (Matrix& m){
-        int rows = m.row_high-m.row_low+1;
-        int cols = col_low=col_high+1;
-        SA <T> temp(rows, cols);
-        
-        for (int i=0; i<rows; i++) {
-            for (int j=0; j<cols; j++) {
-                for (int k=0; k<m.col_high-m.col_low+1; i++)
-                    temp[i][j] += matrix[i+row_low][i+col_low] * m.matrix[i+m.row_low][j+m.col_low];
+        if (col_high-col_low  !=  m.row_high-m.row_low)       {cout << "Matrix is impossible " << endl;      exit(0);}
+        cout << "Multiplication :" << endl;
+        Matrix <T> temp(row_low, row_high, m.col_low, m.col_high);
+        for (int i=row_low; i<=row_high; i++) {
+            for (int j=m.col_low; j<=m.col_high; j++) {
+                for (int k=0; k<=col_high-col_low; k++)
+                    temp[i][j] += matrix[i][k+col_low] * m.matrix[k+m.row_low][j];
             }
         }
+        return temp;
     }
     
     friend ostream& operator<< <T>(ostream& os, Matrix<T> s);
@@ -151,24 +145,37 @@ ostream & operator<<(ostream & os, Matrix < T > m) {
 }
 
 int main(){
-/*    SA<int> a(10);
-    int i;
-    for( i=0;i<10;i++)
-        a[i]=i;
-    cout<<"printing using []"<<endl;
-    for( i=0;i<10;i++)
-        cout<<a[i]<<endl;
-    cout<<"and now with overloaded <<"<<endl;
-    cout<<a;
-*/
     
-    Matrix <int> m (3,20) ;
-    m[2][15]=5;
-    cout << m;
+    Matrix <int> m (5,7,11,14) ;
+    m[5][11]=2;
+    m[5][12]=6;
+    m[5][13]=3;
+    m[5][14] =4;
     
+    m[6][11]=1;
+    m[6][12]=4;
+    m[6][13]=4;
+    m[6][14] =0;
     
+    m[7][11]=0;
+    m[7][12]=2;
+    m[7][13]=3;
+    m[7][14] =5;
+
+    cout << m << endl;
     
+    Matrix <int> n (10,13,5,6);
+    n[10][5] = 3;
+    n[10][6] = 0;
+    n[11][5] = 0;
+    n[11][6] = 2;
+    n[12][5] = 3;
+    n[12][6] = 1;
+    n[13][5] = 4;
+    n[13][6] = 0;
     
-//    system("pause");
+    cout << n << endl;
+    
+    cout << m*n;
     return 0;
 }
