@@ -29,6 +29,7 @@ public:
         low=l;
         high=h;
         p=new T[h-l+1];
+        for (int i=0;i<h-l+1; i++)  p[i]=0;
     }
     // single parameter constructor lets us
     // create a SA almost like a "standard" one by writing
@@ -87,7 +88,7 @@ ostream& operator<<(ostream& os, SA<T> s){
 template < class T >
 class Matrix {
 private:
-    SA <SA <T>> matrix;
+    SA <SA <T> > matrix;
     int row_low;
     int row_high;
     int col_low;
@@ -102,6 +103,11 @@ public:
         for (int j = 0; j < r; j++)
             matrix[j] = SA <T> (c);
     }
+/*    Matrix (const Matrix & m) {
+        for (int i=m.row_low; i<=m.row_high;i++)
+            matrix[i] = SA <T> (m.col_low, m.col_high);
+    }
+*/
     Matrix(int rowl, int rowh, int coll, int colh) {
         row_low = rowl;
         row_high = rowh;
