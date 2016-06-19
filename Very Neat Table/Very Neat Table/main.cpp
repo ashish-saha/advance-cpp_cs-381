@@ -149,34 +149,84 @@ private:
     Matrix <T> table ;
     int row;
     int col;
-    int table_row;
-    int table_col;
+    int max_row;
+    int max_col;
 public:
     VNT () {}
     VNT (int m, int n) {
         table = Matrix<T> (m, n);
         row = 0;
         col = 0;
-        table_row =m;
-        table_col=n;
+        max_row =m;
+        max_col=n;
     }
     void add (int x) {
         table[row][col] = x;
 
         for (int i=row; i>=0; i--) {
             for (int j=col; j>=0; j--) {
-                if (i==0 && j==0)       break;
-                else if (i==0)   {if (x<table[i][j-1])   {table[i][j] = table[i][j-1]; table[i][j-1]=x;}}
-                else if (j==0)   {if (x<table[i-1][j])   {table[i][j] = table[i-1][j]; table[i-1][j]=x;}}
+                if      (i==0 && j==0)       break;
+                else if (i==0)     {if (table[i][j]<table[i][j-1])   {int temp=table[i][j]; table[i][j] = table[i][j-1]; table[i][j-1]=temp;}}
+                else if (j==0)     {if (table[i][j]<table[i-1][j])   {int temp=table[i][j]; table[i][j] = table[i-1][j]; table[i-1][j]=temp;}}
                 else {
-                    if      (table[i-1][j] > table [i][j-1])    {table[i][j] = table[i-1][j]; table[i-1][j] = x;}
-                    else if (table[i][j-1] > table [i-1][j])    {table[i][j] = table[i][j-1]; table[i][j-1]=x;}
+                    if      ((table[i-1][j] >= table [i][j-1]) && (table[i-1][j] > table[i][j]))    {table[i][j] = table[i-1][j]; table[i-1][j]=x;}
+                    else if ((table[i][j-1] > table [i-1][j]) && (table[i][j-1] > table[i][j]))  {table[i][j] = table[i][j-1]; table[i][j-1]=x;}
                 }
              }
         }
         col+=1;
-        if (col==table_col)   {col=0; row+=1;}
+        if      (col==max_col)   {col=0; row+=1;      }
+        if      (row==max_row && col==0)   { row=max_row-1;  col=max_col-1; }
+
     }
+    
+    int getMin() {
+        int min = table[0][0];
+        table[0][0] = table[row][col];
+        table[row][col] = 0;
+        
+        col-=1;
+        if (col==-1)    {col=max_col;     row-=1;}
+        
+        for (int i=0; i<=row; i++) {
+            for (int j=0; j<max_col; j++) {
+                if (i==max_row-1 && j== max_col-1)      break;
+                else if (i==row) {
+                    if ((table[i][j] > table [i][j+1]) && table[i][j+1] != 0)   {int temp = table[i][j]; table[i][j] = table[i][j+1]; table[i][j+1] = temp;}
+                }
+                else if (j==max_col-1)    {
+                    if (table[i][j] > table[i+1][j] && table[i+1][j] != 0)    {int temp = table[i][j]; table[i][j] = table[i+1][j]; table[i+1][j] = temp;}
+                }
+                else if ((table[i][j] > table[i][j+1]) && (table[i+1][j] >= table[i][j+1]) && table[i][j+1] != 0)   {
+                    int temp = table[i][j];
+                    table[i][j] = table[i][j+1];
+                    table[i][j+1] = temp;
+                }
+                else if ((table[i][j] > table[i+1][j]) && (table[i][j+1] > table[i+1][j]) && table[i+1][j] != 0)   {
+                    int temp = table[i][j];
+                    table[i][j] = table[i+1][j];
+                    table[i+1][j] = temp;
+                }
+            }
+        }
+        return min;
+    }
+
+    bool find (int x) {
+        for (int i=0; i<max_row; i++) {
+            for (int j=max_col-1; j>=0; j--) {
+                if      (x==table[i][j])     return true;
+                else if (x>table[i][j])      break;
+                else if (x<table[i][j])      continue;
+            }
+        }
+        return false;
+    }
+
+    void sort (int k[], int size) {
+        
+    }
+    
     friend ostream& operator<< <T>(ostream& os, VNT<T> v);
 };
 
@@ -188,29 +238,27 @@ ostream & operator<<(ostream & os, VNT < T > v) {
 
 int main(){
     
-
-    
-    VNT <int> v (5,4);
+    VNT <int> v (4,4);
     v.add(25);
-    cout << v << endl;
     v.add(23);
-    cout << v << endl;
     v.add (9);
-    cout << v << endl;
-    v.add (5);
-    cout << v << endl;
+    v.add (10);
     v.add (30);
-    cout << v << endl;
-    v.add (7);
-    cout << v << endl;
+    v.add (3);
     v.add (32);
-    cout << v << endl;
     v.add(28);
-    cout << v << endl;
-    v.add(3);
-    cout << v << endl;
+    v.add(4);
+    v.add(21);
+    v.add(17);
+    v.add(2);
     v.add(7);
-    cout << v << endl;
+    v.add(1);
+    v.add(13);
+    v.add(12);
+    cout << v << endl << endl;
+    cout << v.find(5) << endl;
     
+//    v.getMin();
+//    cout << v << endl;
     return 0;
 }
