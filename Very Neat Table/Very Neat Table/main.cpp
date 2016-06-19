@@ -1,4 +1,5 @@
 #include<iostream>
+#include<math.h>
 #include <cstdlib>
 #include<cassert>
 using namespace std;
@@ -165,9 +166,13 @@ public:
 
         for (int i=row; i>=0; i--) {
             for (int j=col; j>=0; j--) {
+                //if its the first item no need to bubble up
                 if      (i==0 && j==0)       break;
+                //if the item is at the first row then only bubble to the left
                 else if (i==0)     {if (table[i][j]<table[i][j-1])   {int temp=table[i][j]; table[i][j] = table[i][j-1]; table[i][j-1]=temp;}}
+                //if the item is at the first column then only bubble to straight up
                 else if (j==0)     {if (table[i][j]<table[i-1][j])   {int temp=table[i][j]; table[i][j] = table[i-1][j]; table[i-1][j]=temp;}}
+                //swap with the one to the left or above
                 else {
                     if      ((table[i-1][j] >= table [i][j-1]) && (table[i-1][j] > table[i][j]))    {table[i][j] = table[i-1][j]; table[i-1][j]=x;}
                     else if ((table[i][j-1] > table [i-1][j]) && (table[i][j-1] > table[i][j]))  {table[i][j] = table[i][j-1]; table[i][j-1]=x;}
@@ -175,7 +180,7 @@ public:
              }
         }
         col+=1;
-        if      (col==max_col)   {col=0; row+=1;      }
+        if      (col==max_col)   {col=0; row+=1; }
         if      (row==max_row && col==0)   { row=max_row-1;  col=max_col-1; }
 
     }
@@ -184,24 +189,28 @@ public:
         int min = table[0][0];
         table[0][0] = table[row][col];
         table[row][col] = 0;
-        
         col-=1;
-        if (col==-1)    {col=max_col;     row-=1;}
+        if (col==-1)    {col=max_col-1;     row-=1;}
         
         for (int i=0; i<=row; i++) {
             for (int j=0; j<max_col; j++) {
-                if (i==max_row-1 && j== max_col-1)      break;
+//              if the loop is at the end of the filled list then then the buuble down is complete
+                if (i==row && j==col)              return min;
+                //if the loop is at the last filled row just bubble to the right
                 else if (i==row) {
                     if ((table[i][j] > table [i][j+1]) && table[i][j+1] != 0)   {int temp = table[i][j]; table[i][j] = table[i][j+1]; table[i][j+1] = temp;}
                 }
+                //if loop is at the last column then just bubble straight down
                 else if (j==max_col-1)    {
                     if (table[i][j] > table[i+1][j] && table[i+1][j] != 0)    {int temp = table[i][j]; table[i][j] = table[i+1][j]; table[i+1][j] = temp;}
                 }
+                //swap with the one to the right
                 else if ((table[i][j] > table[i][j+1]) && (table[i+1][j] >= table[i][j+1]) && table[i][j+1] != 0)   {
                     int temp = table[i][j];
                     table[i][j] = table[i][j+1];
                     table[i][j+1] = temp;
                 }
+                //swap with the one below
                 else if ((table[i][j] > table[i+1][j]) && (table[i][j+1] > table[i+1][j]) && table[i+1][j] != 0)   {
                     int temp = table[i][j];
                     table[i][j] = table[i+1][j];
@@ -224,9 +233,12 @@ public:
     }
 
     void sort (int k[], int size) {
+        for (int i=0; i<size; i++)
+            add(k[i]);
         
+        for (int i=0; i<size; i++)
+            k[i] = getMin();
     }
-    
     friend ostream& operator<< <T>(ostream& os, VNT<T> v);
 };
 
@@ -237,28 +249,17 @@ ostream & operator<<(ostream & os, VNT < T > v) {
 }
 
 int main(){
+
+    int k[16] = {5,7,1,3,6,5,8,45,21,85,36, 8, 3, 6, 19, 2};
+    cout << "Original: ";
+    for (int i=0; i<16; i++)        cout << k[i] << " ";
+    cout << endl;
     
-    VNT <int> v (4,4);
-    v.add(25);
-    v.add(23);
-    v.add (9);
-    v.add (10);
-    v.add (30);
-    v.add (3);
-    v.add (32);
-    v.add(28);
-    v.add(4);
-    v.add(21);
-    v.add(17);
-    v.add(2);
-    v.add(7);
-    v.add(1);
-    v.add(13);
-    v.add(12);
-    cout << v << endl << endl;
-    cout << v.find(5) << endl;
+    VNT<int> A (4,4);
+    A.sort(k, 16);
     
-//    v.getMin();
-//    cout << v << endl;
+    cout << "Sorted:   " ;
+    for (int i=0; i<16; i++)        cout << k[i] << " ";
+    cout << endl;
     return 0;
 }
